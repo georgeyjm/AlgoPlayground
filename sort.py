@@ -1,3 +1,54 @@
+from random import randint, shuffle
+
+class generate_array:
+
+    def _shuffle(array):
+        shuffle(array)
+        return array
+
+    def consecutive(start: int, end: int) -> list:
+        '''Generates a shuffled, consecutive, non-repetitive array in the given range.'''
+        return generate_array._shuffle([i for i in range(start, end + 1)])
+
+    def fixed_range(start: int, end: int, count: int) -> list:
+        '''Generates an array containing a specific length of numbers in the given range.'''
+        return [randint(start, end) for i in range(count)]
+
+    def few_unique(start: int, levels: int, levelLength: int, levelHeight: int) -> list:
+        '''Generates a stair-like array that has few unique values.'''
+        array = []
+        for val in range(0, levels * levelHeight, levelHeight):
+            array += [start + val for i in range(levelLength)]
+        return _shuffle(array)
+
+    def nearly_sorted_array(start: int, end: int, count: int, switchCount: int, startWithConsecutive: bool=False) -> list:
+        '''Generates an array that is almost sorted.
+        If `startWithConsecutive` is `True`, paramater `count` will be ignored.'''
+        if not startWithConsecutive:
+            array = sorted(generate_array.fixed_range(start, end, count)) # using `sorted` is quite cheating
+        else:
+            array = list(range(start, end))
+        length = len(array)
+        if switchCount > length // 2:
+            raise ValueError('switchCount is too big')
+        switched = []
+        for i in range(switchCount):
+            chosen = randint(0, length-1)
+            while chosen in switched:
+                chosen = randint(0, length-1)
+            difference = randint(-length // 10, length // 10) if length >= 10 else 1
+            other = chosen + difference
+            while other < 0 or other >= length or other == chosen or other in switched:
+                difference = randint(-length // 10, length // 10) if length >= 10 else 1
+                other = chosen + difference
+            array[chosen], array[other] = array[other], array[chosen]
+        return array
+
+    def reversed(start: int, end: int) -> list:
+        '''Generates a reversed consecutive array in the given range.'''
+        return list(reversed([i for i in range(start, end)]))
+
+
 def bubble_sort(array: list) -> (list, int):
     array = array[:] # create a copy
     length = len(array)
